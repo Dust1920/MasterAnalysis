@@ -1,8 +1,9 @@
 import numpy as np
 import AtmosModel as At
+import json
 
-# import random as r
-# import matplotlib.pyplot as plt
+#with open("parameters.json",'r') as f:
+# Parameters = json.load(f)
 
 # Escalas
 Ls = 10  # Km
@@ -24,27 +25,27 @@ dT0 = 0.15
 dT0 = dT0 / Ts
 
 # Condiciones iniciales
-W10 = 0
+W10 = 0 # Velocidad.
 W10 = W10 / Vs
 W11 = 0
 W11 = W11 / Vs
 
-T10 = 300
+T10 = 300 # Temperatura potencial.
 T10 = T10 / Ths
 T11 = 300
 T11 = T11 / Ths
 
-QV10 = 16
+QV10 = 16 # Proporción de vapror de agua 
 QV10 = QV10 / Qs
 QV11 = 16
 QV11 = QV11 / Qs
 
-QR10 = 0
+QR10 = 0 # Proporción de agua líquida
 QR10 = QR10 / Qs
 QR11 = 0
 QR11 = QR11 / Qs
 
-QN10 = 0
+QN10 = 0 # Proporción de núcleos de condensación 
 QN10 = QN10 / Qs
 QN11 = 0
 QN11 = QN11 / Qs
@@ -98,8 +99,8 @@ vpar = np.array([B, QV11, LCP, epsilon, ThetaE, g])
 # plt.plot(np.array(Bouyancypoints)*(Vs/(Ts*60)),Z*Ls)
 # plt.plot()
 
-dT = dT0
-dZ = dZ0
+dT = dT0 #Desplazamiento en el tiempo
+dZ = dZ0 #Desplazamieno en el espacio
 
 Wblock[1, 0] = W10
 Wblock[1, 1] = W11

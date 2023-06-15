@@ -1,0 +1,17 @@
+{
+    "scaleheight": 10,
+    "scaletemp": 3,
+    "scaletime": 15,
+    "scalerateprop": 1000,
+    "tempotencialenvrate": 3, 
+    "latentheatvapor": 2.5e6,
+    "specheatvapor": 10e3,
+    "epsilon": 0.6,
+    "q_star": 1000,
+    "gravity": 9.81,
+    "tau0": 0.1,
+    "gamma": 0.4,
+    "taue": 0.4,
+    "const1": 0.2,
+    "constc0": 0.4  
+}
