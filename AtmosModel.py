@@ -2,7 +2,24 @@ import numpy as np
 
 
 def approxfqv(z, c):
-    # Dr.Gerardo Hernandez Dueñas
+    """
+    Codigo creado por Gerardo Hernández Dueñas
+
+        Descripición
+    approxfqv es una aproximación de la función que mide la proporción del vapor de agua en saturación (qvs)
+        Parametros
+    z: Altura (Adimensional)
+    c: Condición inicial (Adimensional)
+        qvs0: Vapor de Agua en Saturación en el ambiente
+        qv: Vapor de Agua en el ambiente
+        Caso Prueba
+    approxfqv(0,0.001)
+        pz=(1-b*0)^d=1
+        fqv=0.001 / pz * np.exp( - a * (1 / ((1 - b * np.log( 1 )) * (1)) - 1))
+           =0.001 / pz * np.exp( - a * (1 / ((1)) - 1) )
+           =0.001 / pz * np.exp(0)
+           =0.001
+    """
     a = 18.04
     b = 3.27
     c0 = 0.1
@@ -14,6 +31,23 @@ def approxfqv(z, c):
 
 
 def getbouyancyforce(z, theta0, par, qv, qr):
+    """
+
+        Descripición
+    getbouyancyforce es la expresión de la fuerza de flotameiento utilizada en nuestro modelo.
+        Parametros
+    z [float]: Altura (Adimensional) 
+    theta0 [float]: Temperatura potencial del ambiente inicial 
+    par [float, vector]: Vector de tamaño 6 
+        par[0]: razon lineal de la Temperatura potencial del ambiente (B)
+        par[1]: Vapor de agua en la altura inicial.
+        par[2]: Calor Latente / Calor Específico
+        par[3]: Constante (epsilon)
+        par[4]: Temperatura potencial equivalente en la altura inicial. 
+        par[5]: Fuerza de gravedad del medio.
+    (cada componente es adimensional)
+            
+    """
     B = par[0]
     qv0 = par[1]
     LCP = par[2]
