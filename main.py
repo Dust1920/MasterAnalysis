@@ -2,8 +2,8 @@ import numpy as np
 import AtmosModel as At
 import json
 
-with open("parameters.json",'r') as f:
- Parameters = json.load(f)
+with open("parameters.json", 'r') as f:
+    Parameters = json.load(f)
 
 print(Parameters)
 # Escalas
@@ -70,7 +70,7 @@ LCP = L / cp
 q_star = 1000
 q_star = q_star / Qs
 qvs0 = 28
-qvs0 = qvs0/ Qs
+qvs0 = qvs0 / Qs
 vt0 = 1
 vtn0 = 1
 epsilon = 0.6
@@ -121,23 +121,25 @@ QRblock[1, 1] = QR11
 QNblock[1, 0] = QN10
 QNblock[1, 1] = QN11
 
-
 for i in range(2):
-    Wblock[0, 1] = Wblock[1,1] + tau_w * 1 / (1+ tau_w) * (At.getbouyancyforce(z0 + dZ * i, T11, vpar, QVblock[1, 1], QRblock[1, 1]) -
-                                                        At.getbouyancyforce(z0 + dZ * (i - 1), T11, vpar, QVblock[1, 1], QRblock[1, 1]))
+    Wblock[0, 1] = Wblock[1, 1] + tau_w * 1 / (1 + tau_w) * (
+                At.getbouyancyforce(z0 + dZ * i, T11, vpar, QVblock[1, 1], QRblock[1, 1]) -
+                At.getbouyancyforce(z0 + dZ * (i - 1), T11, vpar, QVblock[1, 1], QRblock[1, 1]))
     Wblock[1, 1] = Wblock[0, 1]
-    CFL=dT / dZ
-    Tblock[0, 1] = Tblock[1, 1] - CFL *(Wblock[1, 1] * Tblock[1, 1]- Wblock[1, 0]*Tblock[1, 0]) + dT * LCP * (
-                        At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1],taue, q_star, z0 + i * dZ))
+    CFL = dT / dZ
+    Tblock[0, 1] = Tblock[1, 1] - CFL * (Wblock[1, 1] * Tblock[1, 1] - Wblock[1, 0] * Tblock[1, 0]) + dT * LCP * (
+        At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1], taue, q_star, z0 + i * dZ))
     Tblock[1, 1] = Tblock[0, 1]
 
-    QVblock[0, 1] = QVblock[1, 1] - CFL * (Wblock[1, 1] * QVblock[1, 1]- Wblock[1, 0]*QVblock[1, 0])- dT * (
-                        At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1],taue, q_star, z0 + i * dZ))
+    QVblock[0, 1] = QVblock[1, 1] - CFL * (Wblock[1, 1] * QVblock[1, 1] - Wblock[1, 0] * QVblock[1, 0]) - dT * (
+        At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1], taue, q_star, z0 + i * dZ))
     QVblock[1, 1] = QVblock[0, 1]
 
-    QRblock[0, 1] = QRblock[1, 1] - CFL * (QRblock[1, 1] * (Wblock[1, 1]-At.get_terminalvelocity(vt0, QRblock[1, 1], q_star)) -
-                                           QRblock[1, 0] * (Wblock[1, 0]-At.get_terminalvelocity(vt0, QRblock[1, 0], q_star))) - dT * (
-                            At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1],taue, q_star, z0 + i * dZ))
+    QRblock[0, 1] = QRblock[1, 1] - CFL * (
+                QRblock[1, 1] * (Wblock[1, 1] - At.get_terminalvelocity(vt0, QRblock[1, 1], q_star)) -
+                QRblock[1, 0] * (Wblock[1, 0] - At.get_terminalvelocity(vt0, QRblock[1, 0], q_star))) - dT * (
+                        At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1], taue, q_star,
+                                   z0 + i * dZ))
     QRblock[1, 1] = QRblock[0, 1]
 
     QNblock[0, 1] = np.exp(-QNblock[1, 1])
