@@ -73,8 +73,12 @@ q_star = 1000
 q_star = q_star / Qs
 qvs0 = 28
 qvs0 = qvs0 / Qs
-vt0 = 1
-vtnd = 1
+vt0 = 0
+vt0 = vt0 / Vs
+
+vtnd = 0
+vtnd = vtnd / Vs
+
 epsilon = 0.6
 ThetaE = (T11 + B * z0) + LCP * At.approxfqv(z0, QV11)
 
@@ -134,7 +138,7 @@ w_base=np.abs(W11)
 for i in range(trace_length):
     Wblock[0, 1] = Wblock[1, 1] + tau_w * 1 / (1 + tau_w) * (
                 At.getbouyancyforce(z0 + dZ * i, T11, vpar, QVblock[1, 1], QRblock[1, 1]) -
-                At.getbouyancyforce(z0 + dZ * (i - 1), T11, vpar, QVblock[1, 1], QRblock[1, 1])) + 1 * tau_w * 1 / (1 + tau_w) * (b_w * dT 
+                At.getbouyancyforce(z0 + dZ * (i - 1), T11, vpar, QVblock[1, 1], QRblock[1, 1])) + 1 * tau_w * 1 / (1 + tau_w) * 0 *(b_w * dT 
                                                                 * np.sqrt(dT) * r.normalvariate(0, 1))
     W[i]=Wblock[0, 1]
     if w_base < np.abs(W[i]):
@@ -144,10 +148,10 @@ for i in range(trace_length):
         dT = 0.8 * dZ
     else:
         dT=np.min([0.8, 0.9 * dZ / w_base] )
-    CFL = dT / dZ * w_base
+    CFL = dT / dZ
     Tblock[0, 1] = Tblock[1, 1] - CFL * (Wblock[1, 1] * Tblock[1, 1] - Wblock[1, 0] * Tblock[1, 0]) + dT * LCP * (
         At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1], taue, q_star, z0 + i * dZ))
-    T[i]=Tblock[0, 1]
+    T[i] = Tblock[0, 1]
     Tblock[1, 1] = Tblock[0, 1]
     QVblock[0, 1] = QVblock[1, 1] - CFL * (Wblock[1, 1] * QVblock[1, 1] - Wblock[1, 0] * QVblock[1, 0]) - dT * (
         At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1], taue, q_star, z0 + i * dZ))
@@ -166,5 +170,6 @@ for i in range(trace_length):
                 QNblock[1, 0] * (Wblock[1, 0] - At.get_aerosolvelocity(vtnd, vt0, QRblock[1, 0], q_star)))
     QN[i] = QNblock[0, 1]
     QNblock[1, 1] = QNblock[0, 1]
-plt.plot(W)
+
+plt.plot(T * Ths)
 plt.show()
