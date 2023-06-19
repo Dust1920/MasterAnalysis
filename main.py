@@ -132,15 +132,15 @@ QN = np.zeros(trace_length)
 
 w_base = np.abs(W11)
 for i in range(trace_length):
+    noise = 1 * tau_w * 1 / (1 + tau_w) * (b_w * np.sqrt(dT) * r.normalvariate(0, 1))
+    print(noise)
     Wblock[0, 1] = Wblock[1, 1] + tau_w * 1 / (1 + tau_w) * (
             At.getbouyancyforce(z0 + dZ * i, T11, vpar, QVblock[1, 1], QRblock[1, 1]) -
-            At.getbouyancyforce(z0 + dZ * (i - 1), T11, vpar, QVblock[1, 1], QRblock[1, 1])) + tau_w * 1 / (
-                               1 + tau_w) * (b_w * dT * np.sqrt(dT) * r.normalvariate(0, 1))
+            At.getbouyancyforce(z0 + dZ * (i - 1), T11, vpar, QVblock[1, 1], QRblock[1, 1])) + noise
     W[i] = Wblock[0, 1]
     if w_base < np.abs(W[i]):
         w_base = np.abs(W[i])
     Wblock[1, 1] = Wblock[0, 1]
-
     if w_base == 0:
         dT = 0.8 * dZ
     else:
@@ -150,12 +150,10 @@ for i in range(trace_length):
         At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1], taue, q_star, z0 + i * dZ))
     T[i] = Tblock[0, 1]
     Tblock[1, 1] = Tblock[0, 1]
-
     QVblock[0, 1] = QVblock[1, 1] - CFL * (Wblock[1, 1] * QVblock[1, 1] - Wblock[1, 0] * QVblock[1, 0]) - dT * (
         At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1], taue, q_star, z0 + i * dZ))
     QV[i] = QVblock[0, 1]
     QVblock[1, 1] = QVblock[0, 1]
-
     QRblock[0, 1] = QRblock[1, 1] - CFL * (
             QRblock[1, 1] * (Wblock[1, 1] - At.get_terminalvelocity(vt0, QRblock[1, 1], q_star)) -
             QRblock[1, 0] * (Wblock[1, 0] - At.get_terminalvelocity(vt0, QRblock[1, 0], q_star))) - dT * (
@@ -163,7 +161,6 @@ for i in range(trace_length):
                                    z0 + i * dZ))
     QR[i] = QRblock[0, 1]
     QRblock[1, 1] = QRblock[0, 1]
-
     QNblock[0, 1] = QNblock[1, 1] - CFL * (
             QNblock[1, 1] * (Wblock[1, 1] - At.get_aerosolvelocity(vtnd, vt0, QRblock[1, 1], q_star)) -
             QNblock[1, 0] * (Wblock[1, 0] - At.get_aerosolvelocity(vtnd, vt0, QRblock[1, 0], q_star)))
