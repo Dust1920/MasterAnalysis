@@ -134,8 +134,7 @@ w_base=np.abs(W11)
 for i in range(trace_length):
     Wblock[0, 1] = Wblock[1, 1] + tau_w * 1 / (1 + tau_w) * (
                 At.getbouyancyforce(z0 + dZ * i, T11, vpar, QVblock[1, 1], QRblock[1, 1]) -
-                At.getbouyancyforce(z0 + dZ * (i - 1), T11, vpar, QVblock[1, 1], QRblock[1, 1])) + tau_w * 1 / (1 + tau_w) * (b_w * dT 
-                                                                * np.sqrt(dT) * r.normalvariate(0, 1))
+                At.getbouyancyforce(z0 + dZ * (i - 1), T11, vpar, QVblock[1, 1], QRblock[1, 1])) + tau_w * 1 / (1 + tau_w) * (b_w * dT * np.sqrt(dT) * r.normalvariate(0, 1))
     W[i]=Wblock[0, 1]
     if w_base < np.abs(W[i]):
         w_base=np.abs(W[i])
