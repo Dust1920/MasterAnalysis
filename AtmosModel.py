@@ -132,6 +132,6 @@ def get_aerosolvelocity(vtnd, vt0, qr, q_star):
     return vtn
 
 
-def auxcdev(cte, qv, qvs0, qr, tau_e, q_star, z):
-    cdev = get_condensation(cte, qv, qvs0, z) - get_evaporation(qr, tau_e, q_star, qv, qvs0, z)
+def auxcdev(tau_0, qn0, qn, gamma, qv, qvs0, qr, tau_e, q_star, z):
+    cdev = get_condensation(tau_0, qn0, qn, gamma, qv, qvs0, z) - get_evaporation(qr, tau_e, q_star, qv, qvs0, z)
     return cdev
