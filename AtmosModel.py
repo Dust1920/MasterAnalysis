@@ -7,11 +7,13 @@ def approxfqv(z, c):
 
         Descripición
     approxfqv es una aproximación de la función que mide la proporción del vapor de agua en saturación (qvs)
+
         Parametros
     z: Altura (Adimensional)
     c: Condición inicial (Adimensional)
         qvs0: Vapor de Agua en Saturación en el ambiente
         qv: Vapor de Agua en el ambiente
+
         Caso Prueba
     approxfqv(0,0.001)
         pz=(1-b*0)^d=1
@@ -19,6 +21,10 @@ def approxfqv(z, c):
            =0.001 / pz * np.exp( - a * (1 / ((1)) - 1) )
            =0.001 / pz * np.exp(0)
            =0.001
+
+
+    Ejemplo
+
     """
     a = 18.04
     b = 3.27
@@ -46,7 +52,6 @@ def getbouyancyforce(z, theta0, par, qv, qr):
         par[4]: Temperatura potencial equivalente en la altura inicial. 
         par[5]: Fuerza de gravedad del medio.
     (cada componente es adimensional)
-            
     """
     B = par[0]
     qv0 = par[1]
