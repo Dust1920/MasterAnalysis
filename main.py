@@ -1,5 +1,7 @@
 import numpy as np
 import AtmosModel as At
+import matplotlib.pyplot as plt
+import random as r
 import json
 
 with open("parameters.json", 'r') as f:
@@ -41,14 +43,14 @@ QV10 = QV10 / Qs
 QV11 = 16
 QV11 = QV11 / Qs
 
-QR10 = 0  # Proporción de agua líquida
+QR10 = 2  # Proporción de agua líquida
 QR10 = QR10 / Qs
-QR11 = 0
+QR11 = 2
 QR11 = QR11 / Qs
 
-QN10 = 0  # Proporción de núcleos de condensación
+QN10 = 1  # Proporción de núcleos de condensación
 QN10 = QN10 / Qs
-QN11 = 0
+QN11 = 1
 QN11 = QN11 / Qs
 
 # Zona de trabajo
@@ -72,7 +74,7 @@ q_star = q_star / Qs
 qvs0 = 28
 qvs0 = qvs0 / Qs
 vt0 = 1
-vtn0 = 1
+vtnd = 1
 epsilon = 0.6
 ThetaE = (T11 + B * z0) + LCP * At.approxfqv(z0, QV11)
 
@@ -121,18 +123,37 @@ QRblock[1, 1] = QR11
 QNblock[1, 0] = QN10
 QNblock[1, 1] = QN11
 
-for i in range(2):
+trace_length = 10
+W=np.zeros(trace_length)
+T=np.zeros(trace_length)
+QV=np.zeros(trace_length)
+QR=np.zeros(trace_length)
+QN=np.zeros(trace_length)
+
+w_base=np.abs(W11)
+for i in range(trace_length):
     Wblock[0, 1] = Wblock[1, 1] + tau_w * 1 / (1 + tau_w) * (
                 At.getbouyancyforce(z0 + dZ * i, T11, vpar, QVblock[1, 1], QRblock[1, 1]) -
-                At.getbouyancyforce(z0 + dZ * (i - 1), T11, vpar, QVblock[1, 1], QRblock[1, 1]))
+                At.getbouyancyforce(z0 + dZ * (i - 1), T11, vpar, QVblock[1, 1], QRblock[1, 1])) + tau_w * 1 / (1 + tau_w) * (b_w * dT 
+                                                                * np.sqrt(dT) * r.normalvariate(0, 1))
+    W[i]=Wblock[0, 1]
+    if w_base < np.abs(W[i]):
+        w_base=np.abs(W[i])
     Wblock[1, 1] = Wblock[0, 1]
-    CFL = dT / dZ
+
+    if w_base == 0:
+        dT = 0.8 * dZ
+    else:
+        dT=np.min([0.8, 0.9 * dZ / w_base] )
+    CFL = dT / dZ * w_base
     Tblock[0, 1] = Tblock[1, 1] - CFL * (Wblock[1, 1] * Tblock[1, 1] - Wblock[1, 0] * Tblock[1, 0]) + dT * LCP * (
         At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1], taue, q_star, z0 + i * dZ))
+    T[i]=Tblock[0, 1]
     Tblock[1, 1] = Tblock[0, 1]
 
     QVblock[0, 1] = QVblock[1, 1] - CFL * (Wblock[1, 1] * QVblock[1, 1] - Wblock[1, 0] * QVblock[1, 0]) - dT * (
         At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1], taue, q_star, z0 + i * dZ))
+    QV[i]=QVblock[0, 1]
     QVblock[1, 1] = QVblock[0, 1]
 
     QRblock[0, 1] = QRblock[1, 1] - CFL * (
@@ -140,7 +161,14 @@ for i in range(2):
                 QRblock[1, 0] * (Wblock[1, 0] - At.get_terminalvelocity(vt0, QRblock[1, 0], q_star))) - dT * (
                         At.auxcdev(T11, QN11, QNblock[1, 1], gamma, QVblock[1, 1], qvs0, QRblock[1, 1], taue, q_star,
                                    z0 + i * dZ))
+    QR[i] = QRblock[0, 1]
     QRblock[1, 1] = QRblock[0, 1]
 
-    QNblock[0, 1] = np.exp(-QNblock[1, 1])
+    QNblock[0, 1] = QNblock[1, 1] - CFL * (
+                QNblock[1, 1] * (Wblock[1, 1] - At.get_aerosolvelocity(vtnd, vt0, QRblock[1, 1], q_star)) -
+                QNblock[1, 0] * (Wblock[1, 0] - At.get_aerosolvelocity(vtnd, vt0, QRblock[1, 0], q_star)))
+    QN[i] = QNblock[0, 1]
     QNblock[1, 1] = QNblock[0, 1]
+
+plt.plot(W)
+plt.show()
