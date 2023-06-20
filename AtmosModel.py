@@ -38,7 +38,6 @@ def approxfqv(z, c):
 
 def getbouyancyforce(z, theta0, par, qv, qr):
     """
-
         Descripición
     getbouyancyforce es la expresión de la fuerza de flotameiento utilizada en nuestro modelo.
         Parametros
